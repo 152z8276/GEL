@@ -249,6 +249,11 @@ namespace GEL.EditorTools
             playerMotor.Weight = weightSystem;
             player.Weight = weightSystem;
 
+            var tiltInput = player.gameObject.AddComponent<TiltInput>();
+            tiltInput.Weight = weightSystem;
+            tiltInput.Motor = playerMotor;
+            player.Tilt = tiltInput;
+
             var playerAttackGoal = new GameObject("Player_AttackGoal").transform;
             playerAttackGoal.position = new Vector3(18f, 0f, 0f);
             playerMotor.AttackGoal = playerAttackGoal;
@@ -303,6 +308,7 @@ namespace GEL.EditorTools
             var mobileControls = managerObject.AddComponent<MobileControls>();
             mobileControls.Player = playerMotor;
             mobileControls.Gesture = gesture;
+            mobileControls.Tilt = tiltInput;
 
             hud.Match = match;
             hud.Possession = possession;

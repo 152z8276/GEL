@@ -89,7 +89,7 @@ namespace GEL
                     Touch touch = Input.GetTouch(i);
                     if (touch.phase != TouchPhase.Began) continue;
                     if (MobileControls.Instance != null &&
-                        MobileControls.Instance.IsTouchOnJoystick(touch.position))
+                        MobileControls.Instance.IsTouchOnUi(touch.position))
                         continue;
 
                     BeginDrag(touch.position);

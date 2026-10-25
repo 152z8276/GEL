@@ -6,6 +6,7 @@ namespace GEL
     {
         public PlayerMotor Player;
         public GestureInput Gesture;
+        public TiltInput Tilt;
         public bool ShowInEditor;
         public float JoystickRadius = 110f;
         public float JoystickMargin = 70f;
@@ -86,6 +87,35 @@ namespace GEL
                    JoystickRadius * JoystickRadius;
         }
 
+        public bool IsTouchOnUi(Vector2 screenPosition)
+        {
+            if (!Visible) return false;
+            if (IsTouchOnJoystick(screenPosition)) return true;
+
+            Rect tiltRect = TiltButtonRect;
+            Rect calRect = CalibrateButtonRect;
+            Vector2 guiPoint = new Vector2(screenPosition.x, Screen.height - screenPosition.y);
+            return tiltRect.Contains(guiPoint) || calRect.Contains(guiPoint);
+        }
+
+        private Rect TiltButtonRect
+        {
+            get
+            {
+                Rect safe = Screen.safeArea;
+                return new Rect(safe.xMax - 176f, Screen.height - safe.yMax + 18f, 158f, 46f);
+            }
+        }
+
+        private Rect CalibrateButtonRect
+        {
+            get
+            {
+                Rect safe = Screen.safeArea;
+                return new Rect(safe.xMax - 176f, Screen.height - safe.yMax + 72f, 158f, 46f);
+            }
+        }
+
         private Vector2 JoystickCenter
         {
             get
@@ -131,6 +161,20 @@ namespace GEL
                     fontSize = 14,
                     normal = { textColor = new Color(0.65f, 0.9f, 1f, 0.9f) }
                 });
+
+            if (Tilt != null)
+            {
+                GUI.color = Color.white;
+                string tiltLabel = Tilt.Enabled ? "TILT: ON" : "TILT: OFF";
+                if (GUI.Button(TiltButtonRect, tiltLabel))
+                {
+                    Tilt.Enabled = !Tilt.Enabled;
+                    if (Tilt.Enabled) Tilt.BeginCalibration();
+                }
+
+                if (GUI.Button(CalibrateButtonRect, "CALIBRATE"))
+                    Tilt.BeginCalibration();
+            }
         }
 
         private void CreateTextures()
