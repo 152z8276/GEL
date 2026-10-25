@@ -15,6 +15,7 @@ namespace GEL
         public bool ControlEnabled = true;
         public Transform BallFoot;
         public Transform BallToe;
+        public WeightSystem Weight;
         public float TackleAbility = 0.75f;
         public float BallControlAbility = 0.75f;
         public float ShotAbility = 0.8f;

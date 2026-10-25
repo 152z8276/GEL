@@ -18,6 +18,7 @@ namespace GEL
         public BallSimulator Ball;
         public ShoulderCamera CameraRig;
         public SlowMotionController SlowMotion;
+        public WeightSystem Weight;
         public Transform AttackGoal;
 
         [Header("Locomotion")]
@@ -74,6 +75,16 @@ namespace GEL
             DribbleSpeed / Mathf.Max(0.1f, MoveSpeed) * DribbleAbilityCap;
 
         public Vector2 VirtualInput { get; set; }
+
+        public void SetGestureLean(Vector2 screenDelta)
+        {
+            if (Weight != null) Weight.SetGestureLean(screenDelta);
+        }
+
+        public void ClearGestureLean()
+        {
+            if (Weight != null) Weight.ClearGestureLean();
+        }
 
         public LocomotionState State { get; private set; } = LocomotionState.Idle;
         public bool IsBraking => State == LocomotionState.Brake;
@@ -492,6 +503,8 @@ namespace GEL
             if (LastActionWasDefensiveBurst)
             {
                 LastDribbleSucceeded = false;
+                if (Weight != null)
+                    Weight.Commit(direction);
                 BeginBurst(direction, true);
                 return true;
             }
@@ -526,9 +539,12 @@ namespace GEL
                 float headingDot = Vector3.Dot(
                     transform.forward, defender.transform.forward);
                 bool differentHeading = headingDot < BodyHeadingDifferentThreshold;
+                float feintAdvantage = Weight != null
+                    ? Weight.GetFeintAdvantage(defender, direction)
+                    : 0f;
                 bool success;
 
-                if (differentHeading)
+                if (differentHeading || feintAdvantage > 0.25f)
                 {
                     success = true;
                 }
@@ -554,6 +570,9 @@ namespace GEL
                     LastDribbleSucceeded = true;
                 }
             }
+
+            if (Weight != null)
+                Weight.Commit(direction);
 
             BeginBurst(direction, false);
 

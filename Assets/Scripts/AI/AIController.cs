@@ -103,6 +103,14 @@ namespace GEL
                 toGoal.y = 0f;
                 target = Ball.transform.position + toGoal.normalized * 1.1f;
 
+                // The defender reads the attacker's weight one reaction beat late.
+                // This gives a visible committed lean that a feint can exploit.
+                if (Human.Weight != null)
+                {
+                    Vector3 lean = Human.Weight.WorldLeanDirection;
+                    target += lean * 0.9f;
+                }
+
                 float distance = Vector3.Distance(transform.position, Ball.transform.position);
                 if (distance < TackleRange && _tackleCooldown <= 0f)
                 {

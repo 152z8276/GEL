@@ -34,6 +34,15 @@ namespace GEL
             if (Motor != null && Motor.IsTurning)
                 roll += 8f * Mathf.Sign(localVelocity.x + 0.001f);
 
+            if (Motor != null && Motor.Weight != null)
+            {
+                pitch += Motor.Weight.Weight.y * 4f;
+                roll -= Motor.Weight.Weight.x * 12f;
+            }
+
+            pitch = Mathf.Clamp(pitch, -15f, 15f);
+            roll = Mathf.Clamp(roll, -18f, 18f);
+
             Quaternion target = Quaternion.Euler(pitch, 0f, roll);
             transform.localRotation = Quaternion.Slerp(transform.localRotation, target, 10f * dt);
 

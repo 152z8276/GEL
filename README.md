@@ -155,6 +155,14 @@
 - **松球不靠距离吸附**：双方脚下各有一个 `FootTouch` 触发器；球保持自然物理运动，直到撞到任一脚的触发器才获得球权。
 - 球是正常 SphereCollider + Rigidbody，不是 Trigger；只有脚部判定器是 Trigger。
 
+## 重心系统（第一版）
+
+- 新增 `WeightSystem`，状态：`Balanced / Lean / Commit / Recover`。
+- 过人手势拖动期间，手势前段会写入局部二维重心 `Weight`；身体/髋部由 `PlayerVisual` 程序化倾斜，root 和摄像机不转。
+- 手势最终方向 commit 时记录 `CommitDirection` 和 `LastLeanDirection`，重心在 `RecoverTime` 内回正。
+- 防守 AI 会以已有 `ReactionTime` 延迟读取玩家重心，并把目标点向该方向偏移；防守者被骗时，过人判定会获得 `GetFeintAdvantage` 加成。
+- 当前还没有设备倾斜输入；`WeightSystem.Tilt` 接口已预留。
+
 ## 过人（第一版）
 
 - 按下时判定触点：球屏幕命中圈内（`BallHitRadius = 95px`）进入射门，圈外进入过人。

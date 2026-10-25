@@ -241,6 +241,13 @@ namespace GEL.EditorTools
             playerMotor.Agent = player;
             playerMotor.Possession = possession;
             playerMotor.Ball = ball;
+            playerMotor.SlowMotion = slowMotion;
+
+            var weightSystem = player.gameObject.AddComponent<WeightSystem>();
+            weightSystem.Agent = player;
+            weightSystem.Motor = playerMotor;
+            playerMotor.Weight = weightSystem;
+            player.Weight = weightSystem;
 
             var playerAttackGoal = new GameObject("Player_AttackGoal").transform;
             playerAttackGoal.position = new Vector3(18f, 0f, 0f);

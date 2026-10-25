@@ -140,6 +140,7 @@ namespace GEL
             if (Player != null)
             {
                 Player.SetGestureLock(true, _mode == GestureMode.Dribble);
+                Player.ClearGestureLean();
                 if (_mode == GestureMode.Shot)
                     Player.BeginAim();
             }
@@ -177,6 +178,8 @@ namespace GEL
         private void ContinueDrag(Vector2 screenPosition)
         {
             _lastScreen = screenPosition;
+            if (_mode == GestureMode.Dribble && Player != null)
+                Player.SetGestureLean(screenPosition - _startScreen);
             AddTrailPoint(screenPosition);
         }
 
@@ -202,6 +205,7 @@ namespace GEL
                 if (Player != null)
                 {
                     Player.EndAim();
+                    Player.ClearGestureLean();
                     Player.SetGestureLock(false);
                 }
                 RestartTrailClear(0.15f);
@@ -237,7 +241,11 @@ namespace GEL
                 dribbleDirection.y = 0f;
 
                 bool accepted = Player != null && Player.TryDribble(dribbleDirection);
-                if (Player != null) Player.SetGestureLock(false);
+                if (Player != null)
+                {
+                    Player.ClearGestureLean();
+                    Player.SetGestureLock(false);
+                }
                 LastResult = !accepted
                     ? "Busy"
                     : (Player.LastActionWasDefensiveBurst
@@ -321,6 +329,7 @@ namespace GEL
             if (Player != null)
             {
                 Player.EndAim();
+                Player.ClearGestureLean();
                 Player.SetGestureLock(false);
             }
 
