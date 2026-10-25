@@ -99,6 +99,7 @@ namespace GEL
         public Vector3 DribbleDirection => _dribbleDir;
         public bool LastDribbleSucceeded { get; private set; }
         public bool LastActionWasDefensiveBurst { get; private set; }
+        public DribbleStyle LastDribbleStyle { get; private set; } = DribbleStyle.Simple;
 
         public void SetGestureLock(bool locked, bool lockMovement = false)
         {
@@ -489,9 +490,10 @@ namespace GEL
                 Possession.EndAim();
         }
 
-        public bool TryDribble(Vector3 direction)
+        public bool TryDribble(Vector3 direction, DribbleStyle style = DribbleStyle.Simple)
         {
             if (Agent == null || Possession == null) return false;
+            LastDribbleStyle = style;
             if (_shotPending || Agent.StunTimer > 0f || _dribbleCooldownTimer > 0f) return false;
             if (Agent.TackleActionTimer > 0f) return false;
 
@@ -542,6 +544,8 @@ namespace GEL
                 float feintAdvantage = Weight != null
                     ? Weight.GetFeintAdvantage(defender, direction)
                     : 0f;
+                if (style == DribbleStyle.Feint || style == DribbleStyle.DoubleTouch)
+                    feintAdvantage = Mathf.Max(feintAdvantage, 0.35f);
                 bool success;
 
                 if (differentHeading || feintAdvantage > 0.25f)

@@ -30,6 +30,7 @@ namespace GEL
         public bool IsDragging => _dragging;
         public bool IsShotDrag => _dragging && _mode == GestureMode.Shot;
         public bool IsDribbleDrag => _dragging && _mode == GestureMode.Dribble;
+        public DribbleStyle LastDribbleStyle { get; private set; } = DribbleStyle.Simple;
 
         private bool _dragging;
         private GestureMode _mode = GestureMode.None;
@@ -134,6 +135,7 @@ namespace GEL
             _hasLastWorld = false;
             _worldPoints.Clear();
             _screenPoints.Clear();
+            LastDribbleStyle = DribbleStyle.Simple;
 
             _mode = IsBallStart(screenPosition) ? GestureMode.Shot : GestureMode.Dribble;
 
@@ -179,8 +181,29 @@ namespace GEL
         {
             _lastScreen = screenPosition;
             if (_mode == GestureMode.Dribble && Player != null)
-                Player.SetGestureLean(screenPosition - _startScreen);
+                Player.SetGestureLean(GetEarlyLeanDelta());
             AddTrailPoint(screenPosition);
+        }
+
+        private Vector2 GetEarlyLeanDelta()
+        {
+            if (_screenPoints.Count < 3)
+                return _lastScreen - _startScreen;
+
+            float total = 0f;
+            for (int i = 1; i < _screenPoints.Count; i++)
+                total += Vector2.Distance(_screenPoints[i - 1], _screenPoints[i]);
+
+            float target = total * 0.32f;
+            float accumulated = 0f;
+            for (int i = 1; i < _screenPoints.Count; i++)
+            {
+                accumulated += Vector2.Distance(_screenPoints[i - 1], _screenPoints[i]);
+                if (accumulated >= target)
+                    return _screenPoints[i] - _startScreen;
+            }
+
+            return _lastScreen - _startScreen;
         }
 
         private void OnDisable()
@@ -240,17 +263,29 @@ namespace GEL
                     right * screenDirection.x;
                 dribbleDirection.y = 0f;
 
-                bool accepted = Player != null && Player.TryDribble(dribbleDirection);
+                DribbleStyle style = DribbleGestureRecognizer.Recognize(
+                    _screenPoints, out float confidence, out float feintAngle,
+                    out float cumulativeTurn);
+                LastDribbleStyle = style;
+
+                bool accepted = Player != null &&
+                                Player.TryDribble(dribbleDirection, style);
                 if (Player != null)
                 {
                     Player.ClearGestureLean();
                     Player.SetGestureLock(false);
                 }
+
+                string styleLabel = style == DribbleStyle.Feint ? "Feint" :
+                    style == DribbleStyle.Roulette ? "Roulette" :
+                    style == DribbleStyle.DoubleTouch ? "Double touch" :
+                    style == DribbleStyle.StepOver ? "Step over" : "Dribble";
+
                 LastResult = !accepted
                     ? "Busy"
                     : (Player.LastActionWasDefensiveBurst
                         ? "Burst"
-                        : (Player.LastDribbleSucceeded ? "Beat!" : "Dribble"));
+                        : (Player.LastDribbleSucceeded ? "Beat!" : styleLabel));
 
                 _mode = GestureMode.None;
                 RestartTrailClear(0.25f);
