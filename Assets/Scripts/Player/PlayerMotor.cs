@@ -101,6 +101,13 @@ namespace GEL
         public bool LastActionWasDefensiveBurst { get; private set; }
         public DribbleStyle LastDribbleStyle { get; private set; } = DribbleStyle.Simple;
 
+        public string ConsumeDribbleAnimationTrigger()
+        {
+            string trigger = _pendingDribbleTrigger;
+            _pendingDribbleTrigger = null;
+            return trigger;
+        }
+
         public void SetGestureLock(bool locked, bool lockMovement = false)
         {
             _gestureLock = locked;
@@ -133,6 +140,7 @@ namespace GEL
         private float _dribbleInputLockTimer;
         private float _dribbleCooldownTimer;
         private Vector3 _dribbleDir;
+        private string _pendingDribbleTrigger;
         private bool _defensiveBurst;
         private bool _gestureLock;
         private bool _gestureLocksMovement;
@@ -577,6 +585,25 @@ namespace GEL
 
             if (Weight != null)
                 Weight.Commit(direction);
+
+            if (style == DribbleStyle.Roulette)
+            {
+                _pendingDribbleTrigger = "Spin";
+            }
+            else if (style == DribbleStyle.Feint)
+            {
+                _pendingDribbleTrigger = Weight != null && Weight.Weight.x >= 0f
+                    ? "FeintRight"
+                    : "FeintLeft";
+            }
+            else if (style == DribbleStyle.DoubleTouch)
+            {
+                _pendingDribbleTrigger = "Dribble";
+            }
+            else if (style == DribbleStyle.StepOver)
+            {
+                _pendingDribbleTrigger = "StepOver";
+            }
 
             BeginBurst(direction, false);
 

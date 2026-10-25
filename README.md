@@ -170,6 +170,17 @@
 - 防守 AI 会以已有 `ReactionTime` 延迟读取玩家重心，并把目标点向该方向偏移；防守者被骗时，过人判定会获得 `GetFeintAdvantage` 加成。
 - 当前还没有设备倾斜输入；`WeightSystem.Tilt` 接口已预留。
 
+## 过人动作（第一版）
+
+- `FreePlayer/FreeAI.controller` 已接入 `Dribble`、`Spin`、`FeintLeft`、`FeintRight`、`StepOver` 状态，使用 `free module` 里的现成动作占位。
+- 识别结果映射：
+  - `Simple`：不触发额外动作
+  - `Feint`：按重心左右触发 `FeintLeft/FeintRight`
+  - `Roulette`：触发 `Spin`
+  - `DoubleTouch`：触发 `Dribble`
+  - `StepOver`：触发 `StepOver`
+- 动画 `applyRootMotion = false`，位移仍由爆发逻辑负责，root 和摄像机不跟随动画旋转。
+
 ## 复杂手势识别（第一版）
 
 - 过人手势在松手时做规则识别，不依赖机器学习。

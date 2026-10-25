@@ -58,6 +58,13 @@ namespace GEL
 
             if (Motor != null && Motor.ConsumeTackleAnimation())
                 Animator.SetTrigger("Tackle");
+
+            if (Motor != null)
+            {
+                string dribbleTrigger = Motor.ConsumeDribbleAnimationTrigger();
+                if (!string.IsNullOrEmpty(dribbleTrigger))
+                    Animator.SetTrigger(dribbleTrigger);
+            }
         }
     }
 }

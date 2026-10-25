@@ -28,6 +28,9 @@ namespace GEL.EditorTools
         private const string WarriorIdlePath = "Assets/Models/FreeModule/Actions/WarriorIdle.fbx";
         private const string Turn180Path = "Assets/Models/FreeModule/Actions/Turn180.fbx";
         private const string TacklePath = "Assets/Models/FreeModule/Actions/Tackle.fbx";
+        private const string LeftTurnPath = "Assets/Models/FreeModule/Actions/LeftTurn.fbx";
+        private const string RightTurnPath = "Assets/Models/FreeModule/Actions/RightTurn.fbx";
+        private const string RunningRightTurnPath = "Assets/Models/FreeModule/Actions/RunningRightTurn.fbx";
         private const string AIPlayerAnimatorPath = "Assets/Animations/FreeAI.controller";
         private const string BallModelPath = "Assets/Models/FreeModule/Creature/Itm_Scr_Ball00.fbx";
         private const string BallAlbedoPath = "Assets/Models/FreeModule/Creature/mitm_scr_ball00_alb.png";
@@ -562,6 +565,11 @@ namespace GEL.EditorTools
             ConfigureAction(WarriorIdlePath, "WarriorIdle", true);
             ConfigureAction(Turn180Path, "Turn180", false);
             ConfigureAction(TacklePath, "Tackle", false);
+            ConfigureAction(DribblePath, "Dribble", false);
+            ConfigureAction(SoccerSpinPath, "SoccerSpin", false);
+            ConfigureAction(LeftTurnPath, "LeftTurn", false);
+            ConfigureAction(RightTurnPath, "RightTurn", false);
+            ConfigureAction(RunningRightTurnPath, "RunningRightTurn", false);
 
             AnimationClip standardRun = LoadClip(StandardRunPath, "StandardRun");
             AnimationClip slowBack = LoadClip(SlowJogBackwardsPath, "SlowJogBackwards");
@@ -571,10 +579,16 @@ namespace GEL.EditorTools
             AnimationClip aiIdle = LoadClip(WarriorIdlePath, "WarriorIdle");
             AnimationClip turn180 = LoadClip(Turn180Path, "Turn180");
             AnimationClip tackle = LoadClip(TacklePath, "Tackle");
+            AnimationClip dribble = LoadClip(DribblePath, "Dribble");
+            AnimationClip spin = LoadClip(SoccerSpinPath, "SoccerSpin");
+            AnimationClip feintLeft = LoadClip(LeftTurnPath, "LeftTurn");
+            AnimationClip feintRight = LoadClip(RightTurnPath, "RightTurn");
+            AnimationClip stepOver = LoadClip(RunningRightTurnPath, "RunningRightTurn");
 
             if (standardRun == null || slowBack == null || runToStop == null ||
                 strike == null || playerIdle == null || aiIdle == null ||
-                turn180 == null || tackle == null)
+                turn180 == null || tackle == null || dribble == null || spin == null ||
+                feintLeft == null || feintRight == null || stepOver == null)
             {
                 Debug.LogWarning("FreeModule animation set incomplete.");
                 return null;
@@ -582,11 +596,11 @@ namespace GEL.EditorTools
 
             RuntimeAnimatorController playerController = CreateFreeController(
                 PlayerAnimatorPath, playerIdle, standardRun, slowBack, runToStop, strike,
-                turn180, tackle);
+                turn180, tackle, dribble, spin, feintLeft, feintRight, stepOver);
 
             RuntimeAnimatorController aiController = CreateFreeController(
                 AIPlayerAnimatorPath, aiIdle, standardRun, slowBack, runToStop, strike,
-                turn180, tackle);
+                turn180, tackle, dribble, spin, feintLeft, feintRight, stepOver);
 
             return new[] { playerController, aiController };
         }
@@ -770,7 +784,12 @@ namespace GEL.EditorTools
             AnimationClip runToStop,
             AnimationClip strike,
             AnimationClip turn180,
-            AnimationClip tackle)
+            AnimationClip tackle,
+            AnimationClip dribble,
+            AnimationClip spin,
+            AnimationClip feintLeft,
+            AnimationClip feintRight,
+            AnimationClip stepOver)
         {
             if (!AssetDatabase.IsValidFolder(AnimatorFolder))
                 AssetDatabase.CreateFolder("Assets", "Animations");
@@ -785,6 +804,11 @@ namespace GEL.EditorTools
             controller.AddParameter("Braking", AnimatorControllerParameterType.Bool);
             controller.AddParameter("Shoot", AnimatorControllerParameterType.Trigger);
             controller.AddParameter("Tackle", AnimatorControllerParameterType.Trigger);
+            controller.AddParameter("Dribble", AnimatorControllerParameterType.Trigger);
+            controller.AddParameter("Spin", AnimatorControllerParameterType.Trigger);
+            controller.AddParameter("FeintLeft", AnimatorControllerParameterType.Trigger);
+            controller.AddParameter("FeintRight", AnimatorControllerParameterType.Trigger);
+            controller.AddParameter("StepOver", AnimatorControllerParameterType.Trigger);
 
             AnimatorStateMachine stateMachine = controller.layers[0].stateMachine;
 
@@ -809,6 +833,26 @@ namespace GEL.EditorTools
             AnimatorState tackleState = stateMachine.AddState("Tackle");
             tackleState.motion = tackle;
             tackleState.speed = 1.5f;
+
+            AnimatorState dribbleState = stateMachine.AddState("Dribble");
+            dribbleState.motion = dribble;
+            dribbleState.speed = 1.5f;
+
+            AnimatorState spinState = stateMachine.AddState("Spin");
+            spinState.motion = spin;
+            spinState.speed = 1.35f;
+
+            AnimatorState feintLeftState = stateMachine.AddState("FeintLeft");
+            feintLeftState.motion = feintLeft;
+            feintLeftState.speed = 1.5f;
+
+            AnimatorState feintRightState = stateMachine.AddState("FeintRight");
+            feintRightState.motion = feintRight;
+            feintRightState.speed = 1.5f;
+
+            AnimatorState stepOverState = stateMachine.AddState("StepOver");
+            stepOverState.motion = stepOver;
+            stepOverState.speed = 1.4f;
 
             stateMachine.defaultState = idle;
 
@@ -863,6 +907,26 @@ namespace GEL.EditorTools
             transition.AddCondition(AnimatorConditionMode.If, 0f, "Tackle");
 
             transition = Link(tackleState, idle, 0.10f, true, 0.75f);
+
+            transition = LinkAny(stateMachine, dribbleState, 0.05f, false);
+            transition.AddCondition(AnimatorConditionMode.If, 0f, "Dribble");
+            transition = Link(dribbleState, idle, 0.10f, true, 0.85f);
+
+            transition = LinkAny(stateMachine, spinState, 0.05f, false);
+            transition.AddCondition(AnimatorConditionMode.If, 0f, "Spin");
+            transition = Link(spinState, idle, 0.10f, true, 0.85f);
+
+            transition = LinkAny(stateMachine, feintLeftState, 0.05f, false);
+            transition.AddCondition(AnimatorConditionMode.If, 0f, "FeintLeft");
+            transition = Link(feintLeftState, idle, 0.10f, true, 0.85f);
+
+            transition = LinkAny(stateMachine, feintRightState, 0.05f, false);
+            transition.AddCondition(AnimatorConditionMode.If, 0f, "FeintRight");
+            transition = Link(feintRightState, idle, 0.10f, true, 0.85f);
+
+            transition = LinkAny(stateMachine, stepOverState, 0.05f, false);
+            transition.AddCondition(AnimatorConditionMode.If, 0f, "StepOver");
+            transition = Link(stepOverState, idle, 0.10f, true, 0.85f);
 
             AssetDatabase.SaveAssets();
             return controller;
