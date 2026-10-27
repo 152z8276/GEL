@@ -249,6 +249,7 @@ namespace GEL
                     pathLength += Vector2.Distance(_screenPoints[i - 1], _screenPoints[i]);
 
                 if (candidate == DribbleStyle.Elastico &&
+                    pathLength < Screen.height * 0.70f &&
                     Mathf.Abs(delta.y) > Screen.height * 0.02f)
                 {
                     if (Player != null)
