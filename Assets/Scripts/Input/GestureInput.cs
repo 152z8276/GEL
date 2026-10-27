@@ -235,6 +235,34 @@ namespace GEL
                 return;
             }
 
+            // A short low-to-high chevron started on the ball is the Elastico,
+            // not a shot. Recognise it before the shot branch so the player does
+            // not have to start every flair gesture outside the ball.
+            if (_mode == GestureMode.Shot && _screenPoints.Count >= 4)
+            {
+                DribbleStyle candidate = DribbleGestureRecognizer.Recognize(
+                    _screenPoints, out float candidateConfidence,
+                    out float candidateFeintAngle, out float candidateTurn);
+
+                float pathLength = 0f;
+                for (int i = 1; i < _screenPoints.Count; i++)
+                    pathLength += Vector2.Distance(_screenPoints[i - 1], _screenPoints[i]);
+
+                if (candidate == DribbleStyle.Elastico &&
+                    pathLength < Screen.height * 0.50f &&
+                    delta.y > Screen.height * 0.03f)
+                {
+                    if (Player != null)
+                    {
+                        Player.EndAim();
+                        Player.ClearGestureLean();
+                        Player.SetGestureLock(true, true);
+                        Player.SetGestureLean(GetEarlyLeanDelta());
+                    }
+                    _mode = GestureMode.Dribble;
+                }
+            }
+
             if (_mode == GestureMode.Dribble)
             {
                 // The screen gesture direction is the movement direction. Use the
