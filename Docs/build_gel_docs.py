@@ -172,7 +172,7 @@ def add_cover(doc, title, subtitle, image_path, tag):
     meta.style = "Table Grid"
     meta.alignment = WD_TABLE_ALIGNMENT.LEFT
     facts = [
-        ("项目", "《绿茵·星能联盟》"),
+        ("项目", "GEL · 1v1 手势足球原型"),
         ("阶段", "P0 可玩原型"),
         ("引擎", "Unity 2022.3.62f3c1  /  Built-in Render Pipeline"),
         ("版本日期", f"v1.0  ·  {date.today().isoformat()}"),
@@ -302,10 +302,10 @@ def build_summary():
     style_document(doc, "GEL · 项目总结报告")
 
     cover = DOCS / "cover_summary.png"
-    create_cover_image(cover, "绿茵·星能联盟", "P0 可玩原型 · 项目总结报告")
+    create_cover_image(cover, "GEL · 1v1 手势足球原型", "P0 可玩原型 · 项目总结报告")
     add_cover(
         doc,
-        "《绿茵·星能联盟》",
+        "GEL · 1v1 手势足球原型",
         "P0 可玩原型 · 项目总结报告",
         cover,
         "PROJECT SUMMARY  /  2026.10",
@@ -331,14 +331,14 @@ def build_summary():
     ])
 
     doc.add_heading("摘要", level=1)
-    add_body(doc, "《绿茵·星能联盟》是一个面向移动端的 1v1 足球手感原型。项目以越肩视角、手势射门、子弹时间和花式过人为核心体验，在 Unity 2022.3 中使用程序化场景与免费 Humanoid 模型快速完成了可玩闭环。")
+    add_body(doc, "GEL · 1v1 手势足球原型是一个面向移动端的足球手感 Demo。项目以越肩视角、手势射门、子弹时间和花式过人为核心体验，在 Unity 2022.3 中使用程序化场景与免费 Humanoid 模型快速完成了可玩闭环。")
     add_body(doc, "项目完成了从射门、带球、抢断、AI 防守、相机、慢动作到移动端摇杆/触屏输入的完整链路，并将视觉方向收敛为“明亮草坪 + 半透明荧光蓝科技穹顶 + 电路纹理 + 三段式角柱”的超智能足球风格。")
     add_body(doc, "当前版本是 P0 原型：功能链路完整，但动画、音频、正式 UI、Android 真机适配和部分手感参数仍属于验证/占位状态。本文档既记录最终成果，也明确未完成项，便于后续接手。")
 
 
     doc.add_heading("1. 项目概况", level=1)
     add_table(doc, ["项目项", "内容"], [
-        ["项目名称", "《绿茵·星能联盟》"],
+        ["项目名称", "GEL · 1v1 手势足球原型"],
         ["项目类型", "移动端 1v1 足球手感 Demo"],
         ["核心关键词", "越肩视角、手势射门、子弹时间、牛尾巴、科技球场"],
         ["引擎", "Unity 2022.3.62f3c1"],
@@ -564,10 +564,10 @@ def build_frontend_plan():
     style_document(doc, "GEL · 完整前端策划案")
 
     cover = DOCS / "cover_frontend.png"
-    create_cover_image(cover, "绿茵·星能联盟", "完整前端策划案 · 客户端与玩家表现层")
+    create_cover_image(cover, "GEL · 1v1 手势足球原型", "完整前端策划案 · 客户端与玩家表现层")
     add_cover(
         doc,
-        "《绿茵·星能联盟》",
+        "GEL · 1v1 手势足球原型",
         "完整前端策划案 · 客户端与玩家表现层",
         cover,
         "FRONTEND / UX / PRESENTATION  ·  2026.10",
@@ -897,7 +897,7 @@ def verify(path):
     d = Document(path)
     print(f"VERIFY {path.name}: paragraphs={len(d.paragraphs)} tables={len(d.tables)} size={path.stat().st_size}")
     text = "\n".join(p.text for p in d.paragraphs)
-    assert "绿茵" in text
+    assert "GEL" in text
     assert len(d.tables) > 0
     assert path.stat().st_size > 10000
 
