@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050d17">
+  <meta name="description" content="GEL · 1v1 手势足球原型策划案：越肩视角、手势射门、子弹时间、直线爆发与牛尾巴花式。">
+  <title>GEL · 1v1 手势足球原型 | 策划案</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <canvas id="fieldCanvas" aria-hidden="true"></canvas>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#overview" aria-label="回到顶部">
+      <span class="brand-mark"><span></span><span></span><span></span></span>
+      <span class="brand-copy"><strong>GEL</strong><small>PLAYABLE DESIGN DOC</small></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav">
+      <span></span><span></span><span class="sr-only">打开导航</span>
+    </button>
+    <nav class="primary-nav" id="primaryNav" aria-label="页面导航">
+      <a href="#overview">概览</a>
+      <a href="#built">已实现</a>
+      <a href="#systems">核心系统</a>
+      <a href="#modules">模块拆解</a>
+      <a href="#planned">计划中</a>
+      <a href="#roadmap">路线图</a>
+    </nav>
+    <a class="header-cta" href="#download">下载文档 <span>↗</span></a>
+  </header>
+
+  <main id="main">
+    <section class="hero section" id="overview">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse-dot"></span> PLAYABLE PROTOTYPE / 01 <span class="eyebrow-slash">/</span> MOBILE 1v1 FOOTBALL</div>
+        <h1>把球场<br><em>变成手势的延伸。</em></h1>
+        <p class="hero-lead">一个以越肩视角、手势射门、子弹时间和牛尾巴过人为核心的 1v1 足球原型。这一版先把“身体感”做出来，再逐步补齐动作、特效、音效和正式 UI。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#built">查看已实现 <span>↓</span></a>
+          <a class="button button-ghost" href="#planned">计划与缺口 <span>→</span></a>
+        </div>
+        <div class="hero-stats" aria-label="项目数据">
+          <div><strong>1</strong><span>1v1 对局</span></div>
+          <div><strong>3</strong><span>先进 3 球</span></div>
+          <div><strong>120</strong><span>单局秒数</span></div>
+          <div><strong>P0</strong><span>可玩原型</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="frame-label"><span>FIELD CAM / 01</span><span class="live-dot">LIVE BUILD</span></div>
+        <div class="hero-frame">
+          <img src="assets/hero-game.jpg" alt="GEL 足球原型 Game 视图：越肩视角下的球员、AI 与科技球场">
+          <div class="frame-scan" aria-hidden="true"></div>
+          <div class="frame-vignette" aria-hidden="true"></div>
+          <div class="float-card float-ball">
+            <span class="float-kicker">BALL RING</span>
+            <strong>95 px</strong>
+            <small>球上起手 = 射门</small>
+          </div>
+          <div class="float-card float-gesture">
+            <span class="float-kicker">GESTURE</span>
+            <svg viewBox="0 0 120 54" aria-hidden="true">
+              <path d="M8 46 L48 26 L80 38 L112 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="8" cy="46" r="3" fill="currentColor"/><circle cx="112" cy="8" r="3" fill="currentColor"/>
+            </svg>
+            <small>直线 = 爆发<br>弯折 = 牛尾巴</small>
+          </div>
+          <div class="frame-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="hero-caption"><span>42 × 26 m</span><span>BUILT-IN PIPELINE</span><span>UNITY 2022.3</span></div>
+      </div>
+    </section>
+
+    <section class="status-rail" aria-label="文档状态">
+      <div class="rail-cell"><span class="rail-label">STATUS</span><strong>P0 可玩</strong></div>
+      <div class="rail-cell"><span class="rail-label">CORE INPUT</span><strong>摇杆 + 手势</strong></div>
+      <div class="rail-cell"><span class="rail-label">SIGNATURE</span><strong>子弹时间 / 牛尾巴</strong></div>
+      <div class="rail-cell"><span class="rail-label">NEXT</span><strong>真机 / 正式表现</strong></div>
+    </section>
+
+    <section class="section intro-section" id="brief">
+      <div class="section-heading">
+        <span class="section-index">02 / BRIEF</span>
+        <h2>先做“有身体感的一瞬间”</h2>
+        <p>不是完整的足球游戏，而是一段可以被手指和镜头同时感知的动作体验。</p>
+      </div>
+      <div class="brief-grid">
+        <article class="brief-card"><span class="card-num">A</span><h3>手势不是按钮</h3><p>射门轨迹同时决定方向、弧线和射程；手指停在球上，意图就已经确定。</p></article>
+        <article class="brief-card"><span class="card-num">B</span><h3>Slow is the show</h3><p>射门与牛尾巴自动进入子弹时间，镜头拉近到球和脚的关系，让动作被看清。</p></article>
+        <article class="brief-card"><span class="card-num">C</span><h3>动作必须有边界</h3><p>球上只射门，球外才做动作；直线是爆发，弯折是花式。规则要能被一眼读懂。</p></article>
+      </div>
+    </section>
+
+    <section class="section built-section" id="built">
+      <div class="section-heading heading-row">
+        <div><span class="section-index">03 / IMPLEMENTED</span><h2>已经做出来的东西</h2></div>
+        <p class="section-side-note">P0 的目标是闭环，不是完成度。以下均为当前工程中可运行或已接通的模块。</p>
+      </div>
+      <div class="built-grid">
+        <article class="built-card"><div class="built-top"><span class="status-pill actual">已实现</span><span class="built-id">01</span></div><h3>1v1 比赛闭环</h3><p>开球、带球、射门、抢断、进球、比分与重开。先进 3 球或 120 秒比分领先者获胜。</p><div class="mini-tags"><span>MatchDirector</span><span>GoalTrigger</span></div></article>
+        <article class="built-card"><div class="built-top"><span class="status-pill actual">已实现</span><span class="built-id">02</span></div><h3>球上起手 · 手势射门</h3><p>起点落在球命中圈内时锁定 Shot；屏幕曲线参与弹道拟合，射程、弧线和横向偏移都有上限。</p><div class="mini-tags"><span>GestureInput</span><span>BallSimulator</span></div></article>
+        <article class="built-card"><div class="built-top"><span class="status-pill actual">已实现</span><span class="built-id">03</span></div><h3>子弹时间与越肩镜头</h3><p>射门、花式与近身对抗会自动减速；镜头降低到球附近并拉近 FOV，让球门、球和脚同时留在画面里。</p><div class="mini-tags"><span>SlowMotionController</span><span>ShoulderCamera</span></div></article>
+        <article class="built-card"><div class="built-top"><span class="status-pill actual">已实现</span><span class="built-id">04</span></div><h3>直线爆发 / 弯折花式</h3><p>球外起手进入 Dribble；路径近似直线为普通爆发，明显弯折为牛尾巴。最后的切线决定突进方向。</p><div class="mini-tags"><span>DribbleGestureRecognizer</span><span>PlayerMotor</span></div></article>
+        <article class="built-card"><div class="built-top"><span class="status-pill actual">已实现</span><span class="built-id">05</span></div><h3>重心、倾斜与假动作</h3><p>Lean / Commit / Recover 三态重心影响 AI 判断；设备倾斜可选，只用于辅助重心，不改变动作类型。</p><div class="mini-tags"><span>WeightSystem</span><span>TiltInput</span></div></article>
+        <article class="built-card"><div class="built-top"><span class="status-pill actual">已实现</span><span class="built-id">06</span></div><h3>抢断、AI 与封闭球场</h3><p>双方共用抢断判定，AI 有反应延迟；42×26 m 球场、半胶囊科技穹顶、边线与门线都是封闭物理体。</p><div class="mini-tags"><span>TackleSystem</span><span>AIController</span><span>P0SceneBuilder</span></div></article>
+      </div>
+    </section>
+
+    <section class="section systems-section" id="systems">
+      <div class="section-heading">
+        <span class="section-index">04 / CORE LOOP</span>
+        <h2>一次进攻，只有两个判断</h2>
+        <p>先判断手指从哪里开始，再判断路径是直线还是弯折。所有复杂度都藏在这两步之后。</p>
+      </div>
+
+      <div class="input-machine">
+        <div class="machine-step">
+          <span class="machine-label">01 / POINTER DOWN</span><h3>起点决定意图</h3>
+          <div class="machine-split">
+            <div class="machine-branch shot"><span class="branch-kicker">BALL HIT AREA</span><strong>SHOT</strong><p>球命中圈内<br>永远射门</p></div>
+            <div class="machine-branch dribble"><span class="branch-kicker">OUTSIDE BALL</span><strong>DRIBBLE</strong><p>球命中圈外<br>才进入动作</p></div>
+          </div>
+        </div>
+        <div class="machine-arrow" aria-hidden="true"><span></span></div>
+        <div class="machine-step">
+          <span class="machine-label">02 / RELEASE</span><h3>路径决定动作</h3>
+          <div class="path-compare">
+            <div class="path-card">
+              <svg viewBox="0 0 220 90" aria-hidden="true"><path d="M18 66 L202 28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="18" cy="66" r="3" fill="currentColor"/><circle cx="202" cy="28" r="3" fill="currentColor"/></svg>
+              <span class="path-title">近似直线</span><strong>BURST</strong><small>最大偏离 ≤ 5%<br>路径 / 弦 ≤ 1.10</small>
+            </div>
+            <div class="path-card path-card-alt">
+              <svg viewBox="0 0 220 90" aria-hidden="true"><path d="M18 72 L112 30 L202 58" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="72" r="3" fill="currentColor"/><circle cx="202" cy="58" r="3" fill="currentColor"/><circle cx="112" cy="30" r="3" fill="currentColor"/></svg>
+              <span class="path-title">明显弯折</span><strong>ELASTICO</strong><small>超过阈值即花式<br>最后一小段切线定向</small>
+            </div>
+          </div>
+        </div>
+        <div class="machine-arrow" aria-hidden="true"><span></span></div>
+        <div class="machine-step machine-step-wide">
+          <span class="machine-label">03 / COMMIT</span>
+          <div class="commit-row"><h3>动作与位移同一帧发生</h3><p>识别完成后立即提交方向与风格：普通爆发只改变移动；Elastico 同时触发程序化伸腿、0.12s 冲刺、子弹时间和镜头拉近。</p></div>
+          <div class="commit-metrics"><div><strong>0.12s</strong><span>爆发窗口</span></div><div><strong>0.34s</strong><span>伸腿动作</span></div><div><strong>0.60s</strong><span>花式慢动作</span></div><div><strong>100ms</strong><span>反馈目标</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section modules-section" id="modules">
+      <div class="section-heading heading-row">
+        <div><span class="section-index">05 / MODULE BREAKDOWN</span><h2>做了的、做浅的、没做的</h2></div>
+        <div class="filter-bar" role="group" aria-label="按状态筛选模块">
+          <button class="filter-btn is-active" data-filter="all" type="button">全部</button>
+          <button class="filter-btn" data-filter="actual" type="button">已实现</button>
+          <button class="filter-btn" data-filter="prototype" type="button">原型/浅做</button>
+          <button class="filter-btn" data-filter="planned" type="button">计划</button>
+        </div>
+      </div>
+
+      <div class="module-grid" id="moduleGrid">
+        <article class="module-card" data-state="prototype">
+          <div class="module-head"><span class="status-pill prototype">数值 · 浅做</span><span class="module-code">NUM / 01</span></div><h3>数值系统</h3><p>目前是手感优先的可运行参数，不是正式数值表。速度、爆发、射门曲线和 AI 反应都还有明显调参空间。</p>
+          <dl class="spec-list"><div><dt>移动 / 带球</dt><dd>7.5 / 6.0 m/s</dd></div><div><dt>带球爆发峰值</dt><dd>16 m/s</dd></div><div><dt>射门前摇</dt><dd>0.35 s</dd></div><div><dt>近身慢动作</dt><dd>3 m</dd></div></dl>
+          <span class="module-note">下一步：把参数抽成 ScriptableObject，做攻防两侧的数值表。</span>
+        </article>
+        <article class="module-card" data-state="prototype">
+          <div class="module-head"><span class="status-pill prototype">花式 · 已接通</span><span class="module-code">FLR / 02</span></div><h3>花式系统</h3><p>只有一个花式：牛尾巴。识别是二元的；直线爆发、弯折花式。花式方向和动作同时提交，但还没有多段动作、失败分支和招式树。</p>
+          <dl class="spec-list"><div><dt>识别窗口</dt><dd>3 个采样点起</dd></div><div><dt>判定</dt><dd>偏离 5% / 弦长 1.10</dd></div><div><dt>突进方向</dt><dd>末段切线</dd></div><div><dt>镜头</dt><dd>0.60s 子弹时间</dd></div></dl>
+          <span class="module-note">计划：加入第二套花式与失败/被断分支，但不抢射门输入。</span>
+        </article>
+        <article class="module-card" data-state="prototype">
+          <div class="module-head"><span class="status-pill prototype">动作 · 原型</span><span class="module-code">ANM / 03</span></div><h3>动作系统</h3><p>使用免费 Humanoid 素材和 Animator 状态机；牛尾巴没有正式动画，靠 LateUpdate 对髋、膝、踝做程序化旋转，属于可验证的占位实现。</p>
+          <dl class="spec-list"><div><dt>骨骼</dt><dd>Humanoid / Mixamo</dd></div><div><dt>状态机</dt><dd>FreePlayer / FreeAI</dd></div><div><dt>牛尾巴</dt><dd>程序化 0.34s</dd></div><div><dt>正式资产</dt><dd>未制作</dd></div></dl>
+          <span class="module-note">计划：正式牛尾巴、爆发、假动作、射门四类动作；脚部 IK 与落地。</span>
+        </article>
+        <article class="module-card" data-state="prototype">
+          <div class="module-head"><span class="status-pill prototype">特效 · 少量</span><span class="module-code">VFX / 04</span></div><h3>特效系统</h3><p>目前只有穹顶电路呼吸、能量核心和基础球场材质；没有触球火花、冲刺残影、射门拖尾、进球庆祝和屏幕后处理。</p>
+          <dl class="spec-list"><div><dt>已有</dt><dd>StadiumGlow 呼吸</dd></div><div><dt>已有</dt><dd>半透明穹顶 / 电路</dd></div><div><dt>缺失</dt><dd>触球 / 残影 / 进球</dd></div><div><dt>缺失</dt><dd>后处理 / 镜头震动</dd></div></dl>
+          <span class="module-note">计划：P1 先把触球、爆发、花式和进球四类反馈做齐。</span>
+        </article>
+        <article class="module-card" data-state="planned">
+          <div class="module-head"><span class="status-pill planned">音效 · 未做</span><span class="module-code">AUD / 05</span></div><h3>音效系统</h3><p>没有音频实现。触球、射门、子弹时间、观众、UI 和进球反馈都还停留在策划层。</p>
+          <dl class="spec-list"><div><dt>触球</dt><dd>短促皮革声</dd></div><div><dt>射门</dt><dd>踢球 + 低频冲击</dd></div><div><dt>子弹时间</dt><dd>whoosh + 心跳</dd></div><div><dt>进球</dt><dd>观众爆发 + 哨声</dd></div></dl>
+          <span class="module-note">计划：音频优先级高于新增玩法，先解决“踢到没有”。</span>
+        </article>
+        <article class="module-card" data-state="prototype">
+          <div class="module-head"><span class="status-pill prototype">UI · 临时</span><span class="module-code">UI / 06</span></div><h3>界面系统</h3><p>比赛 HUD 用 OnGUI 临时实现，只有比分、计时、球权和手势结果；没有主菜单、教学、暂停、结算、设置和安全区适配。</p>
+          <dl class="spec-list"><div><dt>当前</dt><dd>OnGUI 原型 HUD</dd></div><div><dt>缺失</dt><dd>主菜单 / 教学 / 结算</dd></div><div><dt>缺失</dt><dd>安全区 / 横屏布局</dd></div><div><dt>计划</dt><dd>UGUI Canvas</dd></div></dl>
+          <span class="module-note">正式版迁移到 UGUI，HUD 与输入区绑定，避免手势误触。</span>
+        </article>
+        <article class="module-card" data-state="actual">
+          <div class="module-head"><span class="status-pill actual">AI · 已实现</span><span class="module-code">AI / 07</span></div><h3>防守与抢断</h3><p>AI 会追球、站位、抢断和射门，有反应延迟；抢断按最近脚到球的距离结算，成功和失败都有僵直。</p>
+          <dl class="spec-list"><div><dt>反应延迟</dt><dd>0.18 s</dd></div><div><dt>抢断成功率</dt><dd>5%–90%</dd></div><div><dt>被抢僵直</dt><dd>0.2 s</dd></div><div><dt>抢断锁</dt><dd>2 s</dd></div></dl>
+          <span class="module-note">下一步：行为树/效用 AI，加入门将和难度档位。</span>
+        </article>
+        <article class="module-card" data-state="prototype">
+          <div class="module-head"><span class="status-pill prototype">移动端 · 待真机</span><span class="module-code">MOB / 08</span></div><h3>移动端与构建</h3><p>代码支持触摸手势、左下摇杆和可选倾斜；横屏构建脚本已准备，但 Android SDK/NDK 与最终 APK 未完成。</p>
+          <dl class="spec-list"><div><dt>输入</dt><dd>触摸 / 摇杆 / 倾斜</dd></div><div><dt>横屏</dt><dd>Landscape Left</dd></div><div><dt>构建</dt><dd>IL2CPP / ARM64</dd></div><div><dt>APK</dt><dd>未产出</dd></div></dl>
+          <span class="module-note">P0.5：装 SDK/NDK，真机回归触摸采样与帧率。</span>
+        </article>
+      </div>
+      <p class="filter-empty" id="filterEmpty" hidden>这个筛选下暂时没有模块。</p>
+    </section>
+
+    <section class="section planned-section" id="planned">
+      <div class="section-heading heading-row">
+        <div><span class="section-index">06 / NOT BUILT YET</span><h2>计划做，但这一版没做</h2></div>
+        <p class="section-side-note">单独成栏，避免把“设计意图”误写成“已完成功能”。</p>
+      </div>
+      <div class="planned-grid">
+        <article class="planned-card"><span class="planned-num">P1</span><h3>正式页面与新手教学</h3><p>主菜单、比赛入口、暂停、结算、设置、三段式教学。</p><span class="planned-state">未开始</span></article>
+        <article class="planned-card"><span class="planned-num">P1</span><h3>动作、特效与音效</h3><p>正式牛尾巴/爆发/射门动作，触球、残影、进球反馈与完整混音。</p><span class="planned-state">占位 / 未开始</span></article>
+        <article class="planned-card"><span class="planned-num">P1</span><h3>Android 真机闭环</h3><p>SDK/NDK、APK、真机触摸、摇杆、倾斜、安全区和帧率回归。</p><span class="planned-state">未产出</span></article>
+        <article class="planned-card"><span class="planned-num">P2</span><h3>门将、体力与更多模式</h3><p>门将 AI、体力、训练模式、难度档位与更多花式。</p><span class="planned-state">远期</span></article>
+        <article class="planned-card"><span class="planned-num">P2</span><h3>数据与长期成长</h3><p>埋点、对局复盘、角色/球场外观、赛季与商业化评估。</p><span class="planned-state">远期</span></article>
+        <article class="planned-card planned-card-warn"><span class="planned-num">RISK</span><h3>识别与镜头风险</h3><p>快速手势采样不足、花式/爆发误判、拉近镜头晕动、透明穹顶 overdraw。</p><span class="planned-state">需验证</span></article>
+      </div>
+    </section>
+
+    <section class="section roadmap-section" id="roadmap">
+      <div class="section-heading"><span class="section-index">07 / ROADMAP</span><h2>从能玩，到能展示</h2><p>先把输入和镜头手感锁死，再补表现层；不要在核心手感没稳之前堆内容。</p></div>
+      <ol class="timeline">
+        <li class="timeline-item is-done"><span class="timeline-dot"></span><div><span class="timeline-phase">P0 · 已完成</span><h3>可玩闭环</h3><p>射门、爆发、花式、抢断、AI、镜头、球场与移动端输入代码接通。</p></div></li>
+        <li class="timeline-item is-next"><span class="timeline-dot"></span><div><span class="timeline-phase">P0.5 · 下一步</span><h3>真机与手感</h3><p>Android APK、触摸采样、摇杆/倾斜回归，确认“球上必射门、球外直线必爆发”。</p></div></li>
+        <li class="timeline-item"><span class="timeline-dot"></span><div><span class="timeline-phase">P1 · 展示版</span><h3>正式表现</h3><p>UGUI、正式动作、音效、触球/进球特效、教学与结算。</p></div></li>
+        <li class="timeline-item"><span class="timeline-dot"></span><div><span class="timeline-phase">P2 · 可测试</span><h3>内容与 AI</h3><p>门将、体力、难度、第二套花式、行为树与数据调参。</p></div></li>
+      </ol>
+    </section>
+
+    <section class="download-section" id="download">
+      <div class="download-copy"><span class="section-index">08 / DOCUMENTS</span><h2>可带走的版本</h2><p>网页用于阅读与展示；Word 版用于打印、改动和面试时快速翻阅。</p></div>
+      <div class="download-links">
+        <a href="../Docs/GEL_项目总结报告.docx" download><span class="download-type">DOCX / REPORT</span><strong>项目总结报告</strong><small>技术架构 · 验证状态 · 限制</small></a>
+        <a href="../Docs/GEL_1v1手势足球原型_策划案.docx" download><span class="download-type">DOCX / PLAN</span><strong>策划案文档版</strong><small>页面 · 输入 · 表现 · 验收</small></a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-brand"><span class="brand-mark"><span></span><span></span><span></span></span><div><strong>GEL · 1v1 手势足球原型</strong><p>玩家侧设计文档 / 2026.10 / P0</p></div></div>
+      <div class="footer-meta"><span>UNITY 2022.3.62f3c1</span><span>BUILT-IN PIPELINE</span><span>CHECKPOINT 18</span></div>
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -561,14 +561,14 @@ def build_summary():
 
 def build_frontend_plan():
     doc = Document()
-    style_document(doc, "GEL · 完整前端策划案")
+    style_document(doc, "GEL · 策划案")
 
     cover = DOCS / "cover_frontend.png"
-    create_cover_image(cover, "GEL · 1v1 手势足球原型", "完整前端策划案 · 客户端与玩家表现层")
+    create_cover_image(cover, "GEL · 1v1 手势足球原型", "策划案 · 客户端与玩家表现层")
     add_cover(
         doc,
         "GEL · 1v1 手势足球原型",
-        "完整前端策划案 · 客户端与玩家表现层",
+        "策划案 · 客户端与玩家表现层",
         cover,
         "FRONTEND / UX / PRESENTATION  ·  2026.10",
     )
@@ -888,7 +888,7 @@ def build_frontend_plan():
         ["目标帧率", "60fps / 低画质 30fps"],
     ])
 
-    out = DOCS / "GEL_完整前端策划案.docx"
+    out = DOCS / "GEL_1v1手势足球原型_策划案.docx"
     doc.save(out)
     return out
 
