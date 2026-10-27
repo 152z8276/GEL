@@ -86,10 +86,10 @@ namespace GEL
             float area = Mathf.Abs(SignedArea(points)) /
                          Mathf.Max(1f, pathLength * pathLength);
 
-            // Elastico: a low-to-high chevron (a reversed > or <). The path
-            // rises vertically, has a sharp apex, and is longer than its net.
-            if (Mathf.Abs(net.y) / Mathf.Max(1f, pathLength) > 0.06f &&
-                pathLength > net.magnitude * 1.25f)
+            // Elastico: any short low-to-high chevron. The exact screen
+            // orientation is deliberately not required; the index finger may
+            // trace a >, <, V or inverted V depending on how the phone is held.
+            if (pathLength > net.magnitude * 1.10f)
             {
                 int apexIndex = 0;
                 float bestDeviation = 0f;
@@ -114,7 +114,7 @@ namespace GEL
                     if (first.sqrMagnitude > 1f && second.sqrMagnitude > 1f)
                     {
                         float apexAngle = Vector2.Angle(first, second);
-                        if (apexAngle > 35f && bestDeviation > pathLength * 0.035f)
+                        if (apexAngle > 30f && bestDeviation > pathLength * 0.03f)
                         {
                             confidence = 0.86f;
                             return DribbleStyle.Elastico;
