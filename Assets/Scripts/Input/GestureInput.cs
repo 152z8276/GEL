@@ -286,7 +286,9 @@ namespace GEL
                     ? "Busy"
                     : (Player.LastActionWasDefensiveBurst
                         ? "Burst"
-                        : (Player.LastDribbleSucceeded ? "Beat!" : styleLabel));
+                        : (Player.LastDribbleSucceeded
+                            ? "Beat [" + styleLabel + "]"
+                            : styleLabel));
 
                 _mode = GestureMode.None;
                 RestartTrailClear(0.25f);

@@ -86,21 +86,34 @@ namespace GEL
             float area = Mathf.Abs(SignedArea(points)) /
                          Mathf.Max(1f, pathLength * pathLength);
 
-            // Elastico: find the sharpest local turn. This handles >, <, V and
-            // inverted V without assuming where the apex is or which way is up.
-            float maxLocalTurn = 0f;
-            for (int i = 2; i < points.Count; i++)
+            // Elastico: measure the bend over a window instead of a single
+            // sample pair. A real finger/mouse corner is rounded over several
+            // frames, so per-point angles can stay tiny even for a clear >/<.
+            int turnWindow = Mathf.Clamp(points.Count / 10, 2, 8);
+            float maxWindowTurn = 0f;
+
+            for (int i = 0; i < points.Count; i++)
             {
-                Vector2 incoming = points[i - 1] - points[i - 2];
-                Vector2 outgoing = points[i] - points[i - 1];
+                int before = Mathf.Max(0, i - turnWindow);
+                int after = Mathf.Min(points.Count - 1, i + turnWindow);
+                Vector2 incoming = points[i] - points[before];
+                Vector2 outgoing = points[after] - points[i];
                 if (incoming.sqrMagnitude < 1f || outgoing.sqrMagnitude < 1f)
                     continue;
 
-                maxLocalTurn = Mathf.Max(
-                    maxLocalTurn, Vector2.Angle(incoming, outgoing));
+                maxWindowTurn = Mathf.Max(
+                    maxWindowTurn, Vector2.Angle(incoming, outgoing));
             }
 
-            if (pathLength > net.magnitude * 1.05f && maxLocalTurn > 25f)
+            Vector2 startDirection = points[Mathf.Min(3, points.Count - 1)] - start;
+            Vector2 endDirection = end - points[Mathf.Max(0, points.Count - 4)];
+            float overallDirectionChange = 0f;
+            if (startDirection.sqrMagnitude > 1f && endDirection.sqrMagnitude > 1f)
+                overallDirectionChange = Vector2.Angle(startDirection, endDirection);
+
+            // A straight burst has no bend; a drawn chevron has one.
+            if (pathLength > net.magnitude * 1.10f &&
+                Mathf.Max(maxWindowTurn, overallDirectionChange) > 25f)
             {
                 confidence = 0.86f;
                 return DribbleStyle.Elastico;
