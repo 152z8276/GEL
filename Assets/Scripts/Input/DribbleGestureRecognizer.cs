@@ -18,8 +18,8 @@ namespace GEL
         // The only two gameplay outcomes are:
         // - straight / near-straight path -> normal burst
         // - anything with a real bend          -> Elastico flair
-        public const float StraightDeviationRatio = 0.075f;
-        public const float StraightPathRatio = 1.12f;
+        public const float StraightDeviationRatio = 0.05f;
+        public const float StraightPathRatio = 1.10f;
 
         public static DribbleStyle Recognize(
             List<Vector2> points,

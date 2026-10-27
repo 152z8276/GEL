@@ -185,6 +185,20 @@ namespace GEL
             AddTrailPoint(screenPosition);
         }
 
+        private Vector2 GetFinalTangent()
+        {
+            if (_screenPoints.Count < 2)
+                return _lastScreen - _startScreen;
+
+            int sampleCount = Mathf.Clamp(_screenPoints.Count / 5, 2, 8);
+            int startIndex = Mathf.Max(0, _screenPoints.Count - sampleCount);
+            Vector2 tangent = _lastScreen - _screenPoints[startIndex];
+            if (tangent.sqrMagnitude < 0.01f)
+                tangent = _lastScreen - _screenPoints[_screenPoints.Count - 2];
+
+            return tangent.normalized;
+        }
+
         private Vector2 GetEarlyLeanDelta()
         {
             if (_screenPoints.Count < 3)
@@ -257,10 +271,13 @@ namespace GEL
                 if (right.sqrMagnitude < 0.001f)
                     right = Player != null ? Player.transform.right : Vector3.right;
 
-                Vector2 screenDirection = delta.normalized;
+                // Use the tangent at the end of the stroke, not the straight
+                // start-to-end chord. The last tangent is what the finger is
+                // pointing at when the player releases.
+                Vector2 screenTangent = GetFinalTangent();
                 Vector3 dribbleDirection =
-                    forward * screenDirection.y +
-                    right * screenDirection.x;
+                    forward * screenTangent.y +
+                    right * screenTangent.x;
                 dribbleDirection.y = 0f;
 
                 DribbleStyle style = DribbleGestureRecognizer.Recognize(
