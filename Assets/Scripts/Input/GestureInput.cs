@@ -34,6 +34,7 @@ namespace GEL
 
         private bool _dragging;
         private GestureMode _mode = GestureMode.None;
+        private bool _forcedElastico;
         private int _touchId = -1;
         private Vector2 _lastScreen;
         private Vector2 _startScreen;
@@ -133,6 +134,7 @@ namespace GEL
             _lastScreen = screenPosition;
             _startTime = Time.unscaledTime;
             _hasLastWorld = false;
+            _forcedElastico = false;
             _worldPoints.Clear();
             _screenPoints.Clear();
             LastDribbleStyle = DribbleStyle.Simple;
@@ -248,10 +250,20 @@ namespace GEL
                 for (int i = 1; i < _screenPoints.Count; i++)
                     pathLength += Vector2.Distance(_screenPoints[i - 1], _screenPoints[i]);
 
-                if (candidate == DribbleStyle.Elastico &&
-                    pathLength < Screen.height * 0.70f &&
-                    Mathf.Abs(delta.y) > Screen.height * 0.02f)
+                float lateralSpan = 0f;
+                for (int i = 1; i < _screenPoints.Count; i++)
+                    lateralSpan = Mathf.Max(lateralSpan,
+                        Mathf.Abs(_screenPoints[i].x - _startScreen.x));
+
+                bool shortFlair = pathLength < Screen.height * 0.70f &&
+                                  Mathf.Abs(delta.y) > Screen.height * 0.02f &&
+                                  lateralSpan > Screen.height * 0.025f;
+                bool chevron = candidate == DribbleStyle.Elastico ||
+                               shortFlair;
+
+                if (chevron)
                 {
+                    _forcedElastico = candidate != DribbleStyle.Elastico;
                     if (Player != null)
                     {
                         Player.EndAim();
@@ -291,9 +303,12 @@ namespace GEL
                     right * screenDirection.x;
                 dribbleDirection.y = 0f;
 
-                DribbleStyle style = DribbleGestureRecognizer.Recognize(
-                    _screenPoints, out float confidence, out float feintAngle,
-                    out float cumulativeTurn);
+                DribbleStyle style = _forcedElastico
+                    ? DribbleStyle.Elastico
+                    : DribbleGestureRecognizer.Recognize(
+                        _screenPoints, out float confidence, out float feintAngle,
+                        out float cumulativeTurn);
+                _forcedElastico = false;
                 LastDribbleStyle = style;
 
                 bool accepted = Player != null &&

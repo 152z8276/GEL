@@ -622,12 +622,12 @@ namespace GEL
                 _elasticoTimer = ElasticoPoseDuration;
             }
 
-            BeginBurst(direction, false);
+            BeginBurst(direction, false, style == DribbleStyle.Elastico);
 
             return true;
         }
 
-        private void BeginBurst(Vector3 direction, bool defensive)
+        private void BeginBurst(Vector3 direction, bool defensive, bool flair = false)
         {
             _defensiveBurst = defensive;
 
@@ -649,7 +649,12 @@ namespace GEL
             if (SlowMotion == null)
                 SlowMotion = FindObjectOfType<SlowMotionController>();
             if (SlowMotion != null)
-                SlowMotion.ForceExit(0.35f);
+            {
+                if (flair)
+                    SlowMotion.ForceEnter(0.60f);
+                else
+                    SlowMotion.ForceExit(0.35f);
+            }
         }
 
         private float GetSafeBurstDistance(Vector3 direction, float desiredDistance)

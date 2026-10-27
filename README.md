@@ -187,7 +187,10 @@
 - 手势：划一个短促的 `>` 或 `<`，从低往高（也兼容反方向）；识别器要求整体有足够竖直位移、路径比净位移长、存在一个足够尖的顶点，最少 3 个采样点即可。
 - 识别为 `DribbleStyle.Elastico`，仍走现有高速爆发。
 - 动作不依赖新素材：`PlayerVisual` 在 `LateUpdate` 里对 Humanoid 的髋/膝/踝做程序化骨骼旋转，向斜前方伸腿再落脚，持续 `ElasticoPoseDuration = 0.34s`。
-- 伸腿方向由最终拨球方向的左右侧决定；root、摄像机和球权逻辑不跟随骨骼旋转。
+- 伸腿方向由最终拨球方向的左右侧决定；root 和球权逻辑不跟随骨骼旋转。
+- 即使起点在球命中圈内，只要是一段带明显横向折返的短手势，也会从射门模式切换为 Elastico；真正向球门的长射门仍然保持射门。
+- Elastico commit 会调用 `SlowMotionController.ForceEnter(0.60s)`，自动进入子弹时间并触发 `ShoulderCamera` 的拉近/FOV 变化；动作在慢动作中完成，然后回到正常速度。
+- 编辑器快捷键 `Ctrl+R` 不生效时，使用菜单 `GEL → Force Recompile Scripts` 强制刷新脚本。
 
 ## 复杂手势识别（第一版）
 
