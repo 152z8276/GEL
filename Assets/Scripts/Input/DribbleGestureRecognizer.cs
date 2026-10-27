@@ -86,41 +86,24 @@ namespace GEL
             float area = Mathf.Abs(SignedArea(points)) /
                          Mathf.Max(1f, pathLength * pathLength);
 
-            // Elastico: any short low-to-high chevron. The exact screen
-            // orientation is deliberately not required; the index finger may
-            // trace a >, <, V or inverted V depending on how the phone is held.
-            if (pathLength > net.magnitude * 1.10f)
+            // Elastico: find the sharpest local turn. This handles >, <, V and
+            // inverted V without assuming where the apex is or which way is up.
+            float maxLocalTurn = 0f;
+            for (int i = 2; i < points.Count; i++)
             {
-                int apexIndex = 0;
-                float bestDeviation = 0f;
-                Vector2 netDirection = net.normalized;
+                Vector2 incoming = points[i - 1] - points[i - 2];
+                Vector2 outgoing = points[i] - points[i - 1];
+                if (incoming.sqrMagnitude < 1f || outgoing.sqrMagnitude < 1f)
+                    continue;
 
-                for (int i = 1; i < points.Count - 1; i++)
-                {
-                    Vector2 relative = points[i] - start;
-                    Vector2 perpendicular = relative -
-                        netDirection * Vector2.Dot(relative, netDirection);
-                    if (perpendicular.magnitude > bestDeviation)
-                    {
-                        bestDeviation = perpendicular.magnitude;
-                        apexIndex = i;
-                    }
-                }
+                maxLocalTurn = Mathf.Max(
+                    maxLocalTurn, Vector2.Angle(incoming, outgoing));
+            }
 
-                if (apexIndex > 0)
-                {
-                    Vector2 first = points[apexIndex] - start;
-                    Vector2 second = end - points[apexIndex];
-                    if (first.sqrMagnitude > 1f && second.sqrMagnitude > 1f)
-                    {
-                        float apexAngle = Vector2.Angle(first, second);
-                        if (apexAngle > 30f && bestDeviation > pathLength * 0.03f)
-                        {
-                            confidence = 0.86f;
-                            return DribbleStyle.Elastico;
-                        }
-                    }
-                }
+            if (pathLength > net.magnitude * 1.05f && maxLocalTurn > 25f)
+            {
+                confidence = 0.86f;
+                return DribbleStyle.Elastico;
             }
 
             if (reversals >= 2 && feintAngle > 55f)
