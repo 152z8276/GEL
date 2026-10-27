@@ -88,7 +88,7 @@ namespace GEL
 
             // Elastico: a low-to-high chevron (a reversed > or <). The path
             // rises vertically, has a sharp apex, and is longer than its net.
-            if (net.y > 0f && net.y / Mathf.Max(1f, pathLength) > 0.10f &&
+            if (Mathf.Abs(net.y) / Mathf.Max(1f, pathLength) > 0.10f &&
                 pathLength > net.magnitude * 1.3f)
             {
                 int apexIndex = 0;

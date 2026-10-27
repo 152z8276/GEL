@@ -250,7 +250,7 @@ namespace GEL
 
                 if (candidate == DribbleStyle.Elastico &&
                     pathLength < Screen.height * 0.50f &&
-                    delta.y > Screen.height * 0.03f)
+                    Mathf.Abs(delta.y) > Screen.height * 0.03f)
                 {
                     if (Player != null)
                     {
