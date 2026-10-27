@@ -100,6 +100,12 @@ namespace GEL
         public bool LastDribbleSucceeded { get; private set; }
         public bool LastActionWasDefensiveBurst { get; private set; }
         public DribbleStyle LastDribbleStyle { get; private set; } = DribbleStyle.Simple;
+        public float ElasticoPoseDuration = 0.34f;
+        public bool IsElasticoActive => _elasticoTimer > 0f;
+        public float ElasticoPhase => _elasticoTimer <= 0f
+            ? 1f
+            : 1f - _elasticoTimer / Mathf.Max(0.01f, ElasticoPoseDuration);
+        public int ElasticoSide { get; private set; } = 1;
 
         public string ConsumeDribbleAnimationTrigger()
         {
@@ -138,6 +144,7 @@ namespace GEL
         private bool _pendingLob;
         private float _dribbleBurstTimer;
         private float _dribbleInputLockTimer;
+        private float _elasticoTimer;
         private float _dribbleCooldownTimer;
         private Vector3 _dribbleDir;
         private string _pendingDribbleTrigger;
@@ -169,6 +176,7 @@ namespace GEL
             if (MaxCurvature <= 0f) MaxCurvature = 1f;
             if (MaxCurveOffset <= 0f) MaxCurveOffset = 8f;
             if (CurveSkill <= 0f) CurveSkill = 1f;
+            if (ElasticoPoseDuration <= 0f) ElasticoPoseDuration = 0.34f;
             if (ShotWindupTime < 0f) ShotWindupTime = 0.35f;
             if (ShotWindupSpeed <= 0f) ShotWindupSpeed = 0.8f;
             if (ShotWindupBallSpeed <= 0f) ShotWindupBallSpeed = 1.2f;
@@ -207,6 +215,9 @@ namespace GEL
 
             if (_dribbleInputLockTimer > 0f)
                 _dribbleInputLockTimer = Mathf.Max(0f, _dribbleInputLockTimer - Time.fixedDeltaTime);
+
+            if (_elasticoTimer > 0f)
+                _elasticoTimer = Mathf.Max(0f, _elasticoTimer - Time.fixedDeltaTime);
 
             if (_shotPending)
             {
@@ -552,8 +563,9 @@ namespace GEL
                 float feintAdvantage = Weight != null
                     ? Weight.GetFeintAdvantage(defender, direction)
                     : 0f;
-                if (style == DribbleStyle.Feint || style == DribbleStyle.DoubleTouch)
-                    feintAdvantage = Mathf.Max(feintAdvantage, 0.35f);
+                if (style == DribbleStyle.Feint || style == DribbleStyle.DoubleTouch ||
+                    style == DribbleStyle.Elastico)
+                    feintAdvantage = Mathf.Max(feintAdvantage, 0.4f);
                 bool success;
 
                 if (differentHeading || feintAdvantage > 0.25f)
@@ -603,6 +615,11 @@ namespace GEL
             else if (style == DribbleStyle.StepOver)
             {
                 _pendingDribbleTrigger = "StepOver";
+            }
+            else if (style == DribbleStyle.Elastico)
+            {
+                ElasticoSide = Vector3.Dot(direction, transform.right) >= 0f ? 1 : -1;
+                _elasticoTimer = ElasticoPoseDuration;
             }
 
             BeginBurst(direction, false);

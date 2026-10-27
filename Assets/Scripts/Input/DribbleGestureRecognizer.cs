@@ -9,7 +9,8 @@ namespace GEL
         Feint,
         Roulette,
         DoubleTouch,
-        StepOver
+        StepOver,
+        Elastico
     }
 
     public static class DribbleGestureRecognizer
@@ -84,6 +85,43 @@ namespace GEL
 
             float area = Mathf.Abs(SignedArea(points)) /
                          Mathf.Max(1f, pathLength * pathLength);
+
+            // Elastico: a low-to-high chevron (a reversed > or <). The path
+            // rises vertically, has a sharp apex, and is longer than its net.
+            if (net.y > 0f && net.y / Mathf.Max(1f, pathLength) > 0.10f &&
+                pathLength > net.magnitude * 1.3f)
+            {
+                int apexIndex = 0;
+                float bestDeviation = 0f;
+                Vector2 netDirection = net.normalized;
+
+                for (int i = 1; i < points.Count - 1; i++)
+                {
+                    Vector2 relative = points[i] - start;
+                    Vector2 perpendicular = relative -
+                        netDirection * Vector2.Dot(relative, netDirection);
+                    if (perpendicular.magnitude > bestDeviation)
+                    {
+                        bestDeviation = perpendicular.magnitude;
+                        apexIndex = i;
+                    }
+                }
+
+                if (apexIndex > 0)
+                {
+                    Vector2 first = points[apexIndex] - start;
+                    Vector2 second = end - points[apexIndex];
+                    if (first.sqrMagnitude > 1f && second.sqrMagnitude > 1f)
+                    {
+                        float apexAngle = Vector2.Angle(first, second);
+                        if (apexAngle > 48f && bestDeviation > pathLength * 0.06f)
+                        {
+                            confidence = 0.86f;
+                            return DribbleStyle.Elastico;
+                        }
+                    }
+                }
+            }
 
             if (reversals >= 2 && feintAngle > 55f)
             {

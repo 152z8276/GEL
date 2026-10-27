@@ -181,6 +181,14 @@
   - `StepOver`：触发 `StepOver`
 - 动画 `applyRootMotion = false`，位移仍由爆发逻辑负责，root 和摄像机不跟随动画旋转。
 
+## 牛尾巴（Elastico）
+
+- 唯一的专项花式动作。
+- 手势：从屏幕低处往高处划倒置的 `>` 或 `<`；识别器要求整体向上、路径比净位移长、存在一个足够尖的顶点。
+- 识别为 `DribbleStyle.Elastico`，仍走现有高速爆发。
+- 动作不依赖新素材：`PlayerVisual` 在 `LateUpdate` 里对 Humanoid 的髋/膝/踝做程序化骨骼旋转，向斜前方伸腿再落脚，持续 `ElasticoPoseDuration = 0.34s`。
+- 伸腿方向由最终拨球方向的左右侧决定；root、摄像机和球权逻辑不跟随骨骼旋转。
+
 ## 复杂手势识别（第一版）
 
 - 过人手势在松手时做规则识别，不依赖机器学习。

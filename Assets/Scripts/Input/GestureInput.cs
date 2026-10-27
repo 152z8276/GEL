@@ -279,7 +279,8 @@ namespace GEL
                 string styleLabel = style == DribbleStyle.Feint ? "Feint" :
                     style == DribbleStyle.Roulette ? "Roulette" :
                     style == DribbleStyle.DoubleTouch ? "Double touch" :
-                    style == DribbleStyle.StepOver ? "Step over" : "Dribble";
+                    style == DribbleStyle.StepOver ? "Step over" :
+                    style == DribbleStyle.Elastico ? "Elastico" : "Dribble";
 
                 LastResult = !accepted
                     ? "Busy"
