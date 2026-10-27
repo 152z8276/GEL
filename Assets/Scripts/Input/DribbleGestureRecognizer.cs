@@ -25,7 +25,7 @@ namespace GEL
             feintAngle = 0f;
             cumulativeTurn = 0f;
 
-            if (points == null || points.Count < 4)
+            if (points == null || points.Count < 3)
                 return DribbleStyle.Simple;
 
             Vector2 start = points[0];

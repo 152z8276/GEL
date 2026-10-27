@@ -238,7 +238,7 @@ namespace GEL
             // A short low-to-high chevron started on the ball is the Elastico,
             // not a shot. Recognise it before the shot branch so the player does
             // not have to start every flair gesture outside the ball.
-            if (_mode == GestureMode.Shot && _screenPoints.Count >= 4)
+            if (_mode == GestureMode.Shot && _screenPoints.Count >= 3)
             {
                 DribbleStyle candidate = DribbleGestureRecognizer.Recognize(
                     _screenPoints, out float candidateConfidence,
